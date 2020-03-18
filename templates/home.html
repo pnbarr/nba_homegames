@@ -4,6 +4,9 @@
     <title></title>
 </head>
 <body>
-    <h1>NBA Home Games!</h1>
+    {% for team in teams %}
+        <h1>{{ team.city}}</h1>
+        <p>{{team.name}}</p>
+    {% endfor%}
 </body>
 </html>
