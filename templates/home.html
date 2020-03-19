@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
     {% for team in teams %}
-        <h1>{{ team.city}}</h1>
+        <h1>{{team.city}}</h1>
         <p>{{team.name}}</p>
-    {% endfor%}
-</body>
-</html>
+    {% endfor %}
+{% endblock content %}
