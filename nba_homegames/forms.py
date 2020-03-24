@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from nba_homegames.models import User
 
 # Class for Registration Form, inherits from FlaskForm
 class RegistrationForm(FlaskForm):
@@ -12,6 +13,20 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators = [DataRequired(), EqualTo('password')])
     submit =  SubmitField('Sign Up')
+
+    def validate_username(self, username):
+        #  Query database to see if username already exists
+        user = User.query.filter_by(username = username.data).first()
+        #  If username already exists, throw validation error
+        if user:
+            raise ValidationError('Username entered is already taken. Please choose another one.')
+
+    def validate_email(self, email):
+        #  Query database to see if email already exists
+        user = User.query.filter_by(email = email.data).first()
+        #  If email already exists, throw validation error
+        if user:
+            raise ValidationError('Email entered is alread taken. Please choose another one.')
 
 # Class for Login Form, inherits from FlaskForm
 class LoginForm(FlaskForm):
