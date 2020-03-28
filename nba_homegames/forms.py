@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from nba_homegames.models import User
 from flask_login import current_user
@@ -64,3 +64,8 @@ class UpdateAccountForm(FlaskForm):
             #  If email already exists, throw validation error
             if user:
                 raise ValidationError('Email entered is alread taken. Please choose another one.')
+
+class PostForm(FlaskForm):
+    title = StringField('Title', validators = [DataRequired()])
+    content = TextAreaField('Content', validators = [DataRequired()])
+    submit = SubmitField('Post')

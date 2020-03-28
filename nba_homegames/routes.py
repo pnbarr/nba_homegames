@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect, request
-from nba_homegames.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from nba_homegames.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from nba_homegames.models import User,Post
 from nba_homegames import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
@@ -7,125 +7,12 @@ import secrets
 import os
 from PIL import Image
 
-teams = [
-    {
-        'city' : 'Atlanta',
-        'name' : 'Hawks'
-    },
-    {
-        'city' : 'Boston',
-        'name' : 'Celtics'
-    },
-    {
-        'city' : 'Brooklyn',
-        'name' : 'Nets'
-    },
-    {
-        'city' : 'Charlotte',
-        'name' : 'Hornets'
-    },
-    {
-        'city' : 'Chicago',
-        'name' : 'Bulls'
-    },
-    {
-        'city' : 'Cleveland',
-        'name' : 'Cavaliers'
-    },
-    {
-        'city' : 'Dallas',
-        'name' : 'Mavericks'
-    },
-    {
-        'city' : 'Denver',
-        'name' : 'Nuggets'
-    },
-    {
-        'city' : 'Detroit',
-        'name' : 'Pistons'
-    },
-    {
-        'city' : 'Golden State',
-        'name' : 'Warriors'
-    },
-    {
-        'city' : 'Houston',
-        'name' : 'Rockets'
-    },
-    {
-        'city' : 'Indiana',
-        'name' : 'Pacers'
-    },
-    {
-        'city' : 'LA',
-        'name' : 'Clippers'
-    },
-    {
-        'city' : 'LA',
-        'name' : 'Lakers'
-    },
-    {
-        'city' : 'Memphis',
-        'name' : 'Grizzlies'
-    },
-    {
-        'city' : 'Miami',
-        'name' : 'Heat'
-    },
-    {
-        'city' : 'Milwaukee',
-        'name' : 'Bucks'
-    },
-    {
-        'city' : 'Minnesota',
-        'name' : 'Timberwolves'
-    },
-    {
-        'city' : 'New Orleans',
-        'name' : 'Pelicans'
-    },
-    {
-        'city' : 'New York',
-        'name' : 'Knicks'
-    },
-    {
-        'city' : 'Oklahoma City',
-        'name' : 'Thunder'
-    },
-    {
-        'city' : 'Orlando',
-        'name' : 'Magic'
-    },
-    {
-        'city' : 'Philadelphia',
-        'name' : '76ers'
-    },
-    {
-        'city' : 'Phoenix',
-        'name' : 'Suns'
-    },
-    {
-        'city' : 'Portland',
-        'name' : 'Trailblazers'
-    },
-    {
-        'city' : 'Sacramento',
-        'name' : 'Kings'
-    },
-    {
-        'city' : 'San Antonio',
-        'name' : 'Spurs'
-    },
-    {
-        'city' : 'Toronto',
-        'name' : 'Raptors'
-    },
-]
-
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html', teams=teams)
+    #  Grab all posts from database
+    posts = Post.query.all()
+    return render_template('home.html', posts = posts)
 
 @app.route('/about')
 def about():
@@ -200,3 +87,16 @@ def account():
     image_file = url_for('static', filename = 'profile_pics/' + current_user.image_file)
     return render_template('account.html', title = 'Account', image_file = image_file, form = form)
 
+@app.route('/post/new', methods = ['GET', 'POST'])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title = form.title.data, content = form.content.data, author = current_user)
+        #  Add new post to database
+        db.session.add(post)
+        #  Commit new post to database
+        db.session.commit()
+        flash('Your post has been created.', 'success')
+        return redirect(url_for('home'))
+    return render_template('create_post.html', title = 'New Post', form = form)
