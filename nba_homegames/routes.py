@@ -10,8 +10,8 @@ from PIL import Image
 @app.route('/')
 @app.route('/home')
 def home():
-    #  Grab all posts from database
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type = int)
+    posts = Post.query.paginate(page = page, per_page = 5)
     return render_template('home.html', posts = posts)
 
 @app.route('/about')
