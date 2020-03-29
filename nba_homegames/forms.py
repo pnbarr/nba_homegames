@@ -63,7 +63,7 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email = email.data).first()
             #  If email already exists, throw validation error
             if user:
-                raise ValidationError('Email entered is alread taken. Please choose another one.')
+                raise ValidationError('Email entered is already taken. Please choose another one.')
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators = [DataRequired()])
