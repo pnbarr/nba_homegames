@@ -27,9 +27,11 @@ def create_app(config_class = Config):
     from nba_homegames.users.routes import users
     from nba_homegames.posts.routes import posts
     from nba_homegames.main.routes import main
+    from nba_homegames.errors.handlers import errors
 
     app.register_blueprint(users)
     app.register_blueprint(posts)
     app.register_blueprint(main)
+    app.register_blueprint(errors)
 
     return app
